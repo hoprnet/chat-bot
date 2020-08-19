@@ -7,7 +7,7 @@ import { SendClient } from '@hoprnet/hopr-protos/node/send_grpc_pb'
 import type { ClientReadableStream } from 'grpc'
 import { ListenRequest, ListenResponse } from '@hoprnet/hopr-protos/node/listen_pb'
 import { Message, IMessage } from './message'
-import { API_URL } from './env'
+import { API_URL, DRY_RUN } from './env'
 import * as words from './words'
 
 
@@ -17,6 +17,33 @@ export const SetupClient = <T extends typeof grpc.Client>(Client: T): InstanceTy
 
 export const getRandomItemFromList = <T>(items: T[]): T => {
   return items[Math.floor(Math.random() * items.length)]
+}
+
+export const filterEnumValuesInSting = <T>(phrase: string, anEnum: T) => {
+  let res = []
+  Object.keys(anEnum).forEach((item) => {
+      if(phrase.includes(anEnum[item])) res.push(item)
+  })
+  return res
+}
+
+export const fileterListInSting = <T>(phrase: string, list: string[]) => {
+  let res = []
+  list.forEach((item) => {
+      if(phrase.includes(item)) res.push(item)
+  })
+  return res
+}
+
+export const getRandomItemFromEnum = <T>(anEnum: T): T[keyof T] => {
+  const key = getRandomItemFromList(Object.keys(anEnum)) 
+  return anEnum[key]
+}
+
+export const getRandomItemFromEnumOtherThan = <T>(anEnum: T, exclude: any[]): T[keyof T] => {
+  const guess = getRandomItemFromList(Object.keys(anEnum))
+  if (exclude.includes(anEnum[guess])) return getRandomItemFromEnumOtherThan(anEnum, exclude)
+  return anEnum[guess]
 }
 
 export const generateRandomSentence = (): string => {
@@ -52,23 +79,28 @@ export const sendMessage = (recepientAddress: string, message: IMessage): Promis
   let client: SendClient
 
   return new Promise((resolve, reject) => {
-    try {
-      client = SetupClient(SendClient)
+    if (DRY_RUN) {
+      console.log(`-> ${recepientAddress}: ${message.text}`)
+      resolve()
+    } else {
+      try {
+        client = SetupClient(SendClient)
 
-      const req = new SendRequest()
-      req.setPeerId(recepientAddress)
-      req.setPayload(Message.fromJson(message).toU8a())
+        const req = new SendRequest()
+        req.setPeerId(recepientAddress)
+        req.setPayload(Message.fromJson(message).toU8a())
 
-      client.send(req, (err) => {
-        if (err) return reject(err)
+        client.send(req, (err) => {
+          if (err) return reject(err)
 
-        console.log(`-> ${recepientAddress}: ${message.text}`)
+          console.log(`-> ${recepientAddress}: ${message.text}`)
+          client.close()
+          resolve()
+        })
+      } catch (err) {
         client.close()
-        resolve()
-      })
-    } catch (err) {
-      client.close()
-      reject(err)
+        reject(err)
+      }
     }
   })
 }

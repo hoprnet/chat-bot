@@ -1,0 +1,94 @@
+{
+    "knowsKiller": [
+        " Well seems that you've found out the killer Haven't You", 
+        " Well I'm impressed that you've found the murderer"
+    ],
+    "wrongKiller": [
+        " Hey! Don't lay blame on an innocent person",
+        " I'm afraid you've caught the wrong killer and now I'm starting to think that you hold a grudge with them"
+    ],
+    "knowsWeapon": [
+        " I'm impress that you've found the Weapon", 
+        " it seems you have a keen sense of deduction cause my friend the weapon you deduced is correct!"
+    ],
+    "wrongWeapon": [
+        " Persistent, aren’t you? but I'm sorry you are imaging the murder from a different perspective cause this weapon is blood-free"
+    ],
+    "knowsRoom": [
+        " were you spectating the murder? the place seems correct!", 
+        " you my friend have guessed the place of murder correctly!"
+    ],
+    "wrongRoom": [
+        " Naa I don't think you can ever find the location of murder."
+    ],
+    "correctComplete": [
+        " Well my friend, aren’t you Sherlock Holmes! You deductions are ABSOLUTELY correct!",
+        " Wait are you... nevermind - I'm impressed - cause you've deduced everything! "
+    ],
+    "wrongComplete": [
+        " Its not as simple as you think, you know!",
+        " Unfortunately none of your deductions are correct :("
+    ],
+    "randomSentence": [
+        " Don't bore me.. Ask for help if you dont know anything!",
+        " I think you dont know around here, look for help "
+    ],
+    "hasNegation": [
+        " Didnt I say you earlier! I dont like pesimists...",
+        " Uff, Ask me straight!"
+    ],
+    "missedKiller": [
+        " You missed the killer! Give it another shot",
+        " The killer?"
+    ],
+    "missedWeapon": [
+        " You missed the Weapon! Give it another shot",
+        " Weapon is the most important in this crime investigation! And you haven't thougt about it properly "
+    ],
+    "missedRoom": [
+        " You missed the Room! Give it another shot",
+        " Room is the most important in this crime investigation! And you haven't thougt about it properly "
+    ],
+    "hasWon": [
+        " seems like you already solved the muder mystery, detective!"
+    ],
+    "hasFailed": [
+        " seems like you cant accuse anymore, detective!"
+    ],
+    "outOfGuesses": [
+        " seeme like you dont have any more changes!",
+        " you already failed! better not disturb me"
+    ],
+    "outOfInvestigataion": [
+        " seeme like you dont have any more changes!",
+        " you already failed! better not disturb me"
+    ],
+    "falseGuess": [
+        " dont trick me! One killer, One Room and One Object",
+        " you can't oversmart me!"
+    ],
+    "incorrectAccuse": [
+        " Ops! You are out of the game"
+    ],
+    "inclompleteAccuse": [
+        " seems like you missed something in your accusition."
+    ],
+    "rulesLines":[
+        " yesterday at midnight there was a crime commited at the Crimmson villa.",
+        " There are five prime suspects Plum, Mustard, Green, White, Scarlett, and Peacock!", 
+        " According to forensics the crime was commited using Candlestick, Dagger, Lead Pipe, Revolver, Rope, or Spanner.",
+        " There are 9 rooms in the villa: Kitchen, Conservatory, Library, Dinning, Ballroom, Hall, Study, Lounge, Billiard",
+        " You have got 5 chances to guess! I am an optimist so I dont like negation.",
+        " If you fail you are out! forever..."
+    ],
+    "payment": " You finally made it! \nThanks for supporting HOPR. \nClaim your Dai here: ",  
+    "noPayment": " You finally made it! \nThanks for supporting HOPR.",
+    "successInvestigate": [
+        " successfull investigation"
+    ],
+    "failInvestigate": [
+        " failed investigation"
+    ] 
+}
+
+  
