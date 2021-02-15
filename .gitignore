@@ -53,3 +53,7 @@ db
 
 # service accounts
 service-account.json
+
+# nodes
+.alice
+.bob

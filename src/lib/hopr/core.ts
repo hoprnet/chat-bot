@@ -1,7 +1,9 @@
 import Hopr from '@hoprnet/hopr-core'
 import type { HoprOptions } from '@hoprnet/hopr-core'
+import type { Types } from '@hoprnet/hopr-core-connector-interface'
 import HoprCoreConnector, { Currencies } from '@hoprnet/hopr-core-connector-interface'
-import { getBootstrapAddresses, u8aToHex } from '@hoprnet/hopr-utils'
+import { getBootstrapAddresses, u8aToHex, parseHosts } from '@hoprnet/hopr-utils'
+import BN from 'bn.js'
 import PeerId from 'peer-id'
 import { EventEmitter } from 'events'
 import { encode, decode } from 'rlp'
@@ -45,10 +47,11 @@ export default class Core {
 
   constructor(
     options: HoprOptions = {
-      provider: process.env.HOPR_CHATBOT_PROVIDER || 'wss://xdai.poanetwork.dev/wss',
+      provider: process.env.HOPR_CHATBOT_PROVIDER || 'wss://ws-mainnet.matic.network',
       network: process.env.HOPR_CHATBOT_NETWORK || 'ETHEREUM',
       debug: Boolean(process.env.HOPR_CHABOT_DEBUG) || false,
       password: process.env.HOPR_CHATBOT_PASSWORD || 'switzerland',
+      hosts: parseHosts()
     },
   ) {
     this.options = { ...options, output: this._functor.bind(this) }
@@ -96,6 +99,57 @@ export default class Core {
     amount: string
   }): Promise<string> {
       return await this.node.paymentChannels.withdraw(currency, recipient, amount)
+  }
+
+  @Core.mustBeStarted()
+  async openPaymentChannel(counterParty: PeerId, amountToFund: BN) {
+    const { utils, types, account } = this.node.paymentChannels
+    const self = this.node.peerInfo.id
+
+    const channelId = await utils.getId(
+      await utils.pubKeyToAccountId(self.pubKey.marshal()),
+      await utils.pubKeyToAccountId(counterParty.pubKey.marshal())
+    )
+
+    const myAvailableTokens = await account.balance
+
+    // validate 'amountToFund'
+    if (amountToFund.lten(0)) {
+      throw Error(`Invalid 'amountToFund' provided: ${amountToFund.toString(10)}`)
+    } else if (amountToFund.gt(myAvailableTokens)) {
+      throw Error(`You don't have enough tokens: ${amountToFund.toString(10)}<${myAvailableTokens.toString(10)}`)
+    }
+
+    const amPartyA = utils.isPartyA(
+      await utils.pubKeyToAccountId(self.pubKey.marshal()),
+      await utils.pubKeyToAccountId(counterParty.pubKey.marshal())
+    )
+
+    const channelBalance = types.ChannelBalance.create(
+      undefined,
+      amPartyA
+        ? {
+            balance: amountToFund,
+            balance_a: amountToFund
+          }
+        : {
+            balance: amountToFund,
+            balance_a: new BN(0)
+          }
+    )
+
+    await this.node.paymentChannels.channel.create(
+      counterParty.pubKey.marshal(),
+      async () => this.node.interactions.payments.onChainKey.interact(counterParty),
+      channelBalance,
+      (balance: Types.ChannelBalance): Promise<Types.SignedChannel> =>
+        this.node.interactions.payments.open.interact(counterParty, balance)
+    )
+
+    return {
+      channelId
+    }
+
   }
 
   @Core.mustBeStarted()

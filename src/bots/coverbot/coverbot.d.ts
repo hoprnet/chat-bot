@@ -12,3 +12,7 @@ export type BalancedHoprNode = {
   balance: string
   hoprBalance: string
 }
+
+export type CoverbotSecret = {
+    [address:string]: number
+}
